@@ -1,7 +1,3 @@
- Airport Data Corrector (X-Plane)
-
----
-
 # Airport Data Corrector (X-Plane)
 
 A small GUI tool that updates airport names inside X-Plane **Custom Scenery** packages using data from an Excel spreadsheet.
@@ -124,8 +120,6 @@ python apt_dat_corrector.py
 - Back up your `Custom Scenery` folder if you're editing important scenery packages
 
 - The tool edits airport name lines inside `apt.dat`
-
-
 
 ## License
 
