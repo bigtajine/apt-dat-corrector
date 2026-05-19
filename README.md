@@ -1,137 +1,81 @@
 # Airport Data Corrector - X-Plane
 
-A standalone GUI application to update airport names in X-Plane custom scenery files using Excel data.
+A compact GUI tool to update airport names in X-Plane custom scenery from an Excel file.
 
-## Features
+## Quick Start (Users)
 
-- **No Python Required**: Standalone `.exe` - works on any Windows PC
-- **Visual Interface**: Easy-to-use GUI with file browser dialogs
-- **Dry Run Mode**: Preview changes before applying them
-- **Live Output**: See exactly what changes are being made
-- **Safe Processing**: Automatic backups via dry run, detailed logging
+- Download AirportCorrector.exe and airports.xlsx from Releases
+- Select your `.xlsx` file and the X-Plane Custom Scenery folder
+- Click "Load Excel", run a **Dry Run** to preview, then uncheck Dry Run to apply
 
-## For Users (Using Pre-Built .exe)
+## Developers
 
-### Quick Start
+- Requirements: Python 3.8+, `pip`
+- Install deps: `pip install -r requirements.txt`
+- Run locally: `python gui_app.py`
+- Build standalone Windows exe: `python build.py`
 
-1. **Download** `AirportCorrector.exe` from the `dist/` folder
-2. **Double-click** the executable to run
-3. **Select Files**:
-   - Click "Browse..." next to "Airport Excel File" and select your `.xlsx` file
-   - Click "Browse..." next to "Custom Scenery Folder" and select your X-Plane Custom Scenery directory
-4. **Load Data**: Click "Load Excel" to import airport data
-5. **Preview**: Keep "Dry Run" checked and click "Start Processing" to preview changes
-6. **Apply Changes**: Uncheck "Dry Run" and click "Start Processing" again to make actual changes
+## Project (essential files)
 
-### System Requirements
+- `gui_app.py` — GUI entry point
+- `apt_corrector_core.py` — core processing logic
+- `build.py` — build helper for PyInstaller
+- `requirements.txt` — Python dependencies
 
-- Windows 7 or later
-- No Python installation needed
-- ~50-100 MB disk space for the executable
+## Legacy / Historical
 
-## For Developers (Building from Source)
+- `apt_dat_corrector.py` — original command-line script (legacy; kept for reference)
+- `airports.xlsx` — sample data used by the legacy script
 
-### Requirements
+Legacy usage (how to run the original script)
 
-- Python 3.8+
-- pip (comes with Python)
-
-### Setup
-
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd apt-dat-corrector
-```
-
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-### Running the GUI
+1. Install the minimal dependency if needed:
 
 ```bash
-python gui_app.py
+pip install openpyxl
 ```
 
-### Building Standalone Executable
+2. Edit the configuration at the top of `apt_dat_corrector.py` to point to your files and mode:
+
+- `CUSTOM_SCENERY` — full path to your X-Plane `Custom Scenery` folder
+- `XLSX_PATH` — full path to your `.xlsx` spreadsheet (first worksheet is used)
+- `DRY_RUN` — `True` to preview only, `False` to write changes
+- `VERBOSE` — `True` to show progress output
+
+3. Spreadsheet format expected by the legacy script:
+
+- Column B (index 2): ICAO code (e.g., KJFK)
+- Column C (index 3): Airport name to apply
+
+4. Run the script (after configuring):
 
 ```bash
-python build.py
+python apt_dat_corrector.py
 ```
 
-This will:
-- Install PyInstaller
-- Build a standalone `.exe` in the `dist/` folder
-- No Python installation needed to run the `.exe`
+Notes and cautions
 
-## Project Structure
+- The legacy script reads the first worksheet and normalizes accents before matching ICAO codes.
+- It updates the airport name on line 4 of any `apt.dat` file it finds (format like `1 5354 1 0 ICAO NAME...`).
+- There is no automatic backup in the legacy script — keep `DRY_RUN = True` until you're confident, and manually back up folders before setting `DRY_RUN = False`.
+- The GUI (`gui_app.py`) and `apt_corrector_core.py` provide a safer, supported workflow; the legacy script is retained for quick, single-file edits and reference.
 
-```
-apt-dat-corrector/
-├── gui_app.py              # Main GUI application
-├── apt_corrector_core.py   # Core processing logic
-├── apt_dat_corrector.py    # Original script (legacy)
-├── airports.csv            # Sample airport data
-├── requirements.txt        # Python dependencies
-├── build.py               # Build script for .exe
-└── dist/                  # Output folder for built .exe
-    └── AirportCorrector.exe
-```
+## How it works (brief)
 
-## How It Works
+- Loads airport ICAO and name data from Excel
+- Scans Custom Scenery folders for `apt.dat` files
+- Updates airport name lines, with an optional Dry Run mode
 
-1. **Loads Excel Data**: Reads airport ICAO codes and corrected names from your Excel file
-2. **Scans X-Plane**: Walks through the Custom Scenery directory
-3. **Updates apt.dat Files**: For each airport found, updates the airport name line
-4. **Dry Run Mode**: Preview mode shows what would be changed without modifying files
-5. **Reports Results**: Displays detailed output for each file processed
+## Troubleshooting (short)
 
-## Troubleshooting
-
-### Executable won't run
-- Make sure you're on Windows
-- Try running as Administrator (right-click → Run as administrator)
-- Check your antivirus - it might be blocking the .exe
-
-### Excel file not loading
-- Make sure the Excel file is in `.xlsx` format
-- Verify the Excel has at least 3 columns: (any), ICAO, Airport Name
-- Excel file must not be open in another program
-
-### No files found
-- Check that the Custom Scenery path is correct
-- Verify the folder contains `apt.dat` files
-- Path should be: `X-Plane 12/Custom Scenery/` or similar
-
-### Changes not applying
-- Make sure "Dry Run" is unchecked
-- Verify you have write permissions to the folder
-- Manually check file permissions if needed
-
-## File Format Requirements
-
-### Excel File (.xlsx)
-Required columns:
-- Column A: (ignored)
-- Column B: ICAO Code (e.g., KJFK, EGLL, LFPG)
-- Column C: Airport Name (e.g., "John F Kennedy Intl", "London Heathrow")
-
-### apt.dat Files
-The tool updates line 4 of each `apt.dat` file with the format:
-```
-1 5354 1 0 ICAO AIRPORT_NAME
-```
+- Executable doesn't start: try running as Administrator, temporarily disable antivirus
+- Excel import fails: ensure `.xlsx` format and required columns (ICAO, Name)
+- No files found: confirm the Custom Scenery path and presence of `apt.dat`
 
 ## License
 
 MIT
 
-## Support
+---
 
-For issues or questions, please check:
-1. The output log for detailed error messages
-2. File paths are correct and accessible
-3. Excel format matches requirements
-4. You have proper file permissions
+For more details, see the source files and `build.py` in the project root.
