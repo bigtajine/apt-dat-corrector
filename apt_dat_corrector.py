@@ -3,9 +3,9 @@ from openpyxl import load_workbook
 import unicodedata
 
 # ---------------- CONFIG ----------------
-CUSTOM_SCENERY = r"C:\Users\Daniel\Desktop\X-Plane 12\Custom Scenery"
-XLSX_PATH = r"C:\Users\Daniel\Downloads\airports.xlsx"
-DRY_RUN = False
+CUSTOM_SCENERY = r"C:\Path\To\X-Plane 12\Custom Scenery"
+XLSX_PATH = r"C:\Path\To\airports.xlsx"
+DRY_RUN = True
 VERBOSE = True
 # ----------------------------------------
 
