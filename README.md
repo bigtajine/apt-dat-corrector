@@ -8,8 +8,6 @@ A small GUI tool that updates airport names inside X-Plane **Custom Scenery** pa
 
 This is useful when third-party scenery uses inconsistent or incorrect airport naming.
 
----
-
 ## What it Does
 
 - Reads ICAO + airport name data from an `.xlsx` file
@@ -19,8 +17,6 @@ This is useful when third-party scenery uses inconsistent or incorrect airport n
 - Updates airport names based on ICAO matches
 
 - Supports **Dry Run mode** so you can preview changes before writing anything
-
----
 
 ## Quick Start (Most Users)
 
@@ -40,8 +36,6 @@ This is useful when third-party scenery uses inconsistent or incorrect airport n
 
 6. Uncheck **Dry Run** and run again to apply edits
 
----
-
 ## Spreadsheet Format
 
 The tool expects the first worksheet to contain:
@@ -57,8 +51,6 @@ Example:
 | KJFK     | John F Kennedy Intl |
 | EGLL     | London Heathrow     |
 
----
-
 ## Project Files (Important)
 
 - `gui_app.py` — GUI entry point
@@ -68,8 +60,6 @@ Example:
 - `build.py` — build helper for PyInstaller
 
 - `requirements.txt` — Python dependencies
-
----
 
 ## Developer Setup
 
@@ -99,8 +89,6 @@ python build.py
 
 Output will be in the `dist/` folder.
 
----
-
 ## Legacy Script (CLI)
 
 This repo also includes an older command-line version:
@@ -129,8 +117,6 @@ python apt_dat_corrector.py
 
 ⚠️ **Note:** the legacy script does not automatically create backups. Always test with `DRY_RUN = True` first.
 
----
-
 ## Safety Notes
 
 - Always run a **Dry Run** before applying changes
@@ -139,7 +125,7 @@ python apt_dat_corrector.py
 
 - The tool edits airport name lines inside `apt.dat`
 
----
+
 
 ## License
 
