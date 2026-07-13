@@ -36,44 +36,44 @@ def main():
     # Step 1: Install PyInstaller if needed
     print("\n[1/4] Checking dependencies...")
     if not run_command("pip install pyinstaller", "Installing PyInstaller"):
-        print("✗ Failed to install PyInstaller")
+        print("Failed to install PyInstaller")
         return False
     
     # Step 2: Install requirements
     print("\n[2/4] Installing requirements...")
     if not run_command("pip install -r requirements.txt", "Installing requirements"):
-        print("✗ Failed to install requirements")
+        print("Failed to install requirements")
         return False
     
     # Step 3: Build executable
     print("\n[3/4] Building executable...")
     build_cmd = (
         "pyinstaller --onefile "
-        "--windowed "
-        "--name apt_dat_corrector "
+        "--console "
+        "--name AirportCorrector "
         "--icon=NONE "
         "--hidden-import=openpyxl "
-        "gui_app.py"
+        "apt_dat_corrector.py"
     )
     
     if not run_command(build_cmd, "Running PyInstaller"):
-        print("✗ PyInstaller build failed")
+        print("PyInstaller build failed")
         return False
-    
+
     # Step 4: Verify
     print("\n[4/4] Verifying build...")
-    exe_path = script_dir / "dist" / "AirportCorrector"
+    exe_path = script_dir / "dist" / "AirportCorrector.exe"
     if exe_path.exists():
         print(f"\n{'='*60}")
-        print("  ✓ BUILD SUCCESSFUL")
+        print("  BUILD SUCCESSFUL")
         print(f"{'='*60}")
         print(f"\nExecutable created at:")
         print(f"  {exe_path}")
-        print(f"\nTo run: Double-click AirportCorrector")
-        print(f"\nThe executable is standalone and requires no Python installation.")
+        print(f"\nTo run: Double-click AirportCorrector.exe")
+        print(f"\nDrop airports.xlsx next to it. No Python installation needed.")
         return True
     else:
-        print(f"\n✗ Executable not found at {exe_path}")
+        print(f"\nExecutable not found at {exe_path}")
         return False
 
 

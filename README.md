@@ -4,14 +4,25 @@ Fixes airport names inside X-Plane `Custom Scenery` packages, using an Excel spr
 
 ## Usage
 
-1. Download `AirportCorrector.exe` and `airports.xlsx` from the Releases page.
-2. Run `AirportCorrector.exe`.
-3. Select your `.xlsx` file and your X-Plane `Custom Scenery` folder.
-4. Click **Load Excel**.
-5. Run with **Dry Run** checked first to preview changes.
-6. Uncheck **Dry Run** and run again to apply them.
+1. Download `AirportCorrector.exe` and `airports.xlsx` from the Releases page, and put them in the same folder.
+2. Double-click `AirportCorrector.exe`.
 
-The output log shows old name → new name for every airport it updates, plus a summary at the end.
+A console window opens and does the rest on its own: it finds `airports.xlsx` next to itself, finds your X-Plane 12 (or 11) `Custom Scenery` folder automatically, and runs a dry run showing every change it would make (old name → new name), ending with a summary list.
+
+Then it asks `Apply these changes? [y/N]`. Type `y` and Enter to write them, or just press Enter to leave everything untouched.
+
+If it can't find the spreadsheet or your X-Plane install, it asks you to paste the path instead.
+
+## Undoing changes
+
+Before it overwrites any `apt.dat`, it saves the original next to it as `apt.dat.apt-corrector-bak`. Run the program again and it'll notice those backup files and offer to restore them:
+
+```
+Found 3 backup(s) from a previous run (original apt.dat files this tool changed).
+Undo those changes and restore the originals? [y/N]:
+```
+
+Say `y` and it restores every changed file and deletes the backups. This is the actual undo — there's no separate "make a backup yourself first" step required.
 
 ## Spreadsheet format
 
@@ -25,36 +36,23 @@ First worksheet, column B = ICAO code, column C = airport name:
 ## Troubleshooting
 
 - **.exe won't run** — try "Run as administrator", or check if your antivirus is blocking it.
-- **No airports loaded** — confirm the file is `.xlsx` (not `.xls`/`.csv`), column B/C are correct, and the file isn't open in Excel.
-- **No files found** — check the Custom Scenery path actually contains `apt.dat` files.
-- **Made a mistake** — restore from your backup. Always back up `Custom Scenery` before a live run.
+- **No airports loaded** — confirm the file is `.xlsx` (not `.xls`) or `.csv`, column B/C are correct, and the file isn't open in Excel.
+- **Can't auto-detect X-Plane** — X-Plane writes `%LOCALAPPDATA%\x-plane_install_12.txt` (or `_11.txt`) on install; if that's missing, just paste the `Custom Scenery` path when asked.
+- **Want to undo** — run the program again, it'll offer to restore from the `.apt-corrector-bak` files automatically (see above).
 
 ## Project files
 
-- `gui_app.py` — GUI entry point
-- `apt_corrector_core.py` — core processing logic
-- `apt_dat_corrector.py` — older CLI version, kept for reference
+- `apt_dat_corrector.py` — console entry point
+- `apt_corrector_core.py` — core processing logic (load spreadsheet, scan/patch apt.dat, backup/restore)
 - `build.py` — PyInstaller build helper
 
 ## Developer setup
 
 ```bash
 pip install -r requirements.txt
-python gui_app.py       # run
-python build.py         # build Windows exe, output in dist/
+python apt_dat_corrector.py   # run
+python build.py               # build Windows exe, output in dist/
 ```
-
-### Legacy CLI
-
-```bash
-pip install openpyxl
-```
-
-Edit `CUSTOM_SCENERY`, `XLSX_PATH`, and `DRY_RUN` at the top of `apt_dat_corrector.py`, then run it directly. It does not create backups automatically — test with `DRY_RUN = True` first.
-
-## Safety
-
-Always dry-run before applying changes, and back up `Custom Scenery` before editing anything you care about.
 
 ## License
 
