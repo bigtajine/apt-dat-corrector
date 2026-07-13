@@ -194,7 +194,7 @@ class AptCorrectorGUI:
             self.status_var.set(f"Complete - {stats['changed']} updated, {stats['skipped']} skipped")
             
         except Exception as e:
-            self._log(f"\n✗ ERROR: {str(e)}\n")
+            self._log(f"\nERROR: {str(e)}\n")
             self.status_var.set("Error occurred")
         finally:
             self.is_processing = False

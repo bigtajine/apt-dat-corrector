@@ -1,125 +1,60 @@
 # Airport Data Corrector (X-Plane)
 
-A small GUI tool that updates airport names inside X-Plane **Custom Scenery** packages using data from an Excel spreadsheet.
+Fixes airport names inside X-Plane `Custom Scenery` packages, using an Excel spreadsheet as the source of correct names. Handy when third-party scenery ships with inconsistent or wrong airport naming.
 
-This is useful when third-party scenery uses inconsistent or incorrect airport naming.
+## Usage
 
-## What it Does
+1. Download `AirportCorrector.exe` and `airports.xlsx` from the Releases page.
+2. Run `AirportCorrector.exe`.
+3. Select your `.xlsx` file and your X-Plane `Custom Scenery` folder.
+4. Click **Load Excel**.
+5. Run with **Dry Run** checked first to preview changes.
+6. Uncheck **Dry Run** and run again to apply them.
 
-- Reads ICAO + airport name data from an `.xlsx` file
+The output log shows old name → new name for every airport it updates, plus a summary at the end.
 
-- Scans X-Plane `Custom Scenery` folders for `apt.dat` files
+## Spreadsheet format
 
-- Updates airport names based on ICAO matches
+First worksheet, column B = ICAO code, column C = airport name:
 
-- Supports **Dry Run mode** so you can preview changes before writing anything
+| B (ICAO) | C (Name)             |
+|----------|-----------------------|
+| KJFK     | John F Kennedy Intl  |
+| EGLL     | London Heathrow      |
 
-## Quick Start (Most Users)
+## Troubleshooting
 
-1. Download `AirportCorrector.exe` and `airports.xlsx` from the **Releases** page
+- **.exe won't run** — try "Run as administrator", or check if your antivirus is blocking it.
+- **No airports loaded** — confirm the file is `.xlsx` (not `.xls`/`.csv`), column B/C are correct, and the file isn't open in Excel.
+- **No files found** — check the Custom Scenery path actually contains `apt.dat` files.
+- **Made a mistake** — restore from your backup. Always back up `Custom Scenery` before a live run.
 
-2. Run `AirportCorrector.exe`
-
-3. Select:
-   
-   - your `.xlsx` file
-   
-   - your X-Plane `Custom Scenery` folder
-
-4. Click **Load Excel**
-
-5. Run a **Dry Run** to preview changes
-
-6. Uncheck **Dry Run** and run again to apply edits
-
-## Spreadsheet Format
-
-The tool expects the first worksheet to contain:
-
-- **Column B** → ICAO code
-
-- **Column C** → Airport name
-
-Example:
-
-| B (ICAO) | C (Name)            |
-| -------- | ------------------- |
-| KJFK     | John F Kennedy Intl |
-| EGLL     | London Heathrow     |
-
-## Project Files (Important)
+## Project files
 
 - `gui_app.py` — GUI entry point
-
 - `apt_corrector_core.py` — core processing logic
+- `apt_dat_corrector.py` — older CLI version, kept for reference
+- `build.py` — PyInstaller build helper
 
-- `build.py` — build helper for PyInstaller
-
-- `requirements.txt` — Python dependencies
-
-## Developer Setup
-
-### Requirements
-
-- Python 3.8+
-
-- pip
-
-### Install Dependencies
+## Developer setup
 
 ```bash
 pip install -r requirements.txt
+python gui_app.py       # run
+python build.py         # build Windows exe, output in dist/
 ```
 
-### Run Locally
-
-```bash
-python gui_app.py
-```
-
-### Build Windows EXE
-
-```bash
-python build.py
-```
-
-Output will be in the `dist/` folder.
-
-## Legacy Script (CLI)
-
-This repo also includes an older command-line version:
-
-- `apt_dat_corrector.py` — legacy CLI tool (kept for reference)
-
-To use it:
-
-1. Install dependency:
+### Legacy CLI
 
 ```bash
 pip install openpyxl
 ```
 
-2. Edit the settings at the top of `apt_dat_corrector.py`:
-- `CUSTOM_SCENERY`
+Edit `CUSTOM_SCENERY`, `XLSX_PATH`, and `DRY_RUN` at the top of `apt_dat_corrector.py`, then run it directly. It does not create backups automatically — test with `DRY_RUN = True` first.
 
-- `XLSX_PATH`
+## Safety
 
-- `DRY_RUN`
-3. Run:
-
-```bash
-python apt_dat_corrector.py
-```
-
-⚠️ **Note:** the legacy script does not automatically create backups. Always test with `DRY_RUN = True` first.
-
-## Safety Notes
-
-- Always run a **Dry Run** before applying changes
-
-- Back up your `Custom Scenery` folder if you're editing important scenery packages
-
-- The tool edits airport name lines inside `apt.dat`
+Always dry-run before applying changes, and back up `Custom Scenery` before editing anything you care about.
 
 ## License
 
