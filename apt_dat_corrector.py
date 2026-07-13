@@ -2,7 +2,7 @@
 
 import os
 import sys
-from apt_corrector_core import load_airport_map_xlsx, scan_and_process, find_backups, restore_backups
+from apt_corrector_core import load_airport_map_xlsx, scan_and_process
 
 for stream in (sys.stdout, sys.stderr):
     if hasattr(stream, "reconfigure"):
@@ -67,17 +67,6 @@ def main():
     else:
         scenery_path = ask_path("Could not auto-detect X-Plane install. Enter path to your Custom Scenery folder: ")
 
-    backups = find_backups(scenery_path)
-    if backups:
-        print(f"\nFound {len(backups)} backup(s) from a previous run (original apt.dat files this tool changed).")
-        answer = input("Undo those changes and restore the originals? [y/N]: ").strip().lower()
-        if answer == "y":
-            restored = restore_backups(scenery_path, log_fn=print)
-            print(f"\nRestored {restored} file(s).")
-            input("\nPress Enter to exit...")
-            return
-        print("Keeping current files. New changes will still be backed up separately.\n")
-
     xlsx_path = find_spreadsheet()
     if xlsx_path:
         print(f"Found spreadsheet: {xlsx_path}")
@@ -99,10 +88,7 @@ def main():
         input("\nPress Enter to exit...")
         return
 
-    answer = input(
-        f"Apply these {dry_stats['changed']} changes? "
-        "A backup of each original apt.dat is kept, run this program again to undo. [y/N]: "
-    ).strip().lower()
+    answer = input(f"Apply these {dry_stats['changed']} changes? [y/N]: ").strip().lower()
     if answer != "y":
         print("No changes applied.")
         input("\nPress Enter to exit...")

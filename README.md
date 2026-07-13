@@ -1,59 +1,35 @@
 # Airport Data Corrector (X-Plane)
 
-Fixes airport names inside X-Plane `Custom Scenery` packages, using an Excel spreadsheet as the source of correct names. Handy when third-party scenery ships with inconsistent or wrong airport naming.
+Corrects airport names in X-Plane `Custom Scenery` `apt.dat` files against a reference spreadsheet.
+
+## Overview
+
+Third-party X-Plane scenery frequently ships with inconsistent or wrong airport names in `apt.dat` (e.g. `KJFK` labeled something other than "John F Kennedy Intl"). This tool walks a `Custom Scenery` folder, matches each `apt.dat`'s ICAO code against a reference spreadsheet, and rewrites the name field where it differs.
+
+## How it works
+
+Row 4 of every `apt.dat` (the airport header line) has the form:
+
+```
+1   <elevation> <deprecated> <deprecated> <ICAO> <name>
+```
+
+The script reads the ICAO code from that line, looks it up in the spreadsheet (column B = ICAO, column C = name), and if the name differs, rewrites the line with the spreadsheet's version. Nothing is written until a dry run has shown the changes and been confirmed.
 
 ## Usage
 
-1. Download `AirportCorrector.exe` and `airports.xlsx` from the Releases page, and put them in the same folder.
-2. Double-click `AirportCorrector.exe`.
+Download `AirportCorrector.exe` and `airports.xlsx` from the Releases page, put them in the same folder, and run the exe — no Python required.
 
-A console window opens and does the rest on its own: it finds `airports.xlsx` next to itself, finds your X-Plane 12 (or 11) `Custom Scenery` folder automatically, and runs a dry run showing every change it would make (old name → new name), ending with a summary list.
-
-Then it asks `Apply these changes? [y/N]`. Type `y` and Enter to write them, or just press Enter to leave everything untouched.
-
-If it can't find the spreadsheet or your X-Plane install, it asks you to paste the path instead.
-
-## Undoing changes
-
-Before it overwrites any `apt.dat`, it saves the original next to it as `apt.dat.apt-corrector-bak`. Run the program again and it'll notice those backup files and offer to restore them:
+To run from source instead:
 
 ```
-Found 3 backup(s) from a previous run (original apt.dat files this tool changed).
-Undo those changes and restore the originals? [y/N]:
+python apt_dat_corrector.py
 ```
 
-Say `y` and it restores every changed file and deletes the backups. This is the actual undo — there's no separate "make a backup yourself first" step required.
+Either way, it auto-detects the X-Plane 12/11 install path (from `%LOCALAPPDATA%\x-plane_install_12.txt` / `_11.txt`) and looks for `airports.xlsx` or `airports.csv` next to itself; if either can't be found it prompts for a path.
 
-## Spreadsheet format
+It always runs a dry run first, prints every change (`ICAO: old name -> new name`), then asks for confirmation before writing anything.
 
-First worksheet, column B = ICAO code, column C = airport name:
+## Notes
 
-| B (ICAO) | C (Name)             |
-|----------|-----------------------|
-| KJFK     | John F Kennedy Intl  |
-| EGLL     | London Heathrow      |
-
-## Troubleshooting
-
-- **.exe won't run** — try "Run as administrator", or check if your antivirus is blocking it.
-- **No airports loaded** — confirm the file is `.xlsx` (not `.xls`) or `.csv`, column B/C are correct, and the file isn't open in Excel.
-- **Can't auto-detect X-Plane** — X-Plane writes `%LOCALAPPDATA%\x-plane_install_12.txt` (or `_11.txt`) on install; if that's missing, just paste the `Custom Scenery` path when asked.
-- **Want to undo** — run the program again, it'll offer to restore from the `.apt-corrector-bak` files automatically (see above).
-
-## Project files
-
-- `apt_dat_corrector.py` — console entry point
-- `apt_corrector_core.py` — core processing logic (load spreadsheet, scan/patch apt.dat, backup/restore)
-- `build.py` — PyInstaller build helper
-
-## Developer setup
-
-```bash
-pip install -r requirements.txt
-python apt_dat_corrector.py   # run
-python build.py               # build Windows exe, output in dist/
-```
-
-## License
-
-MIT
+This repository contains the patcher, its Excel/CSV reference data, and documentation. No X-Plane or third-party scenery files are included.

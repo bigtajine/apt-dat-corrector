@@ -1,12 +1,9 @@
 """Core functionality for apt.dat corrector"""
 
 import os
-import shutil
 import unicodedata
 from typing import Callable, Optional, Dict, Tuple
 from openpyxl import load_workbook
-
-BACKUP_SUFFIX = ".apt-corrector-bak"
 
 
 def strip_accents(text):
@@ -94,14 +91,6 @@ def process_apt_dat(apt_path: str, airport_map: Dict, dry_run: bool = True,
     log(f"    NEW: {new_name}\n")
 
     if not dry_run:
-        backup_path = apt_path + BACKUP_SUFFIX
-        if not os.path.exists(backup_path):
-            try:
-                shutil.copy2(apt_path, backup_path)
-            except Exception as e:
-                log(f"    ERROR BACKING UP: {e}")
-                return None
-
         lines[3] = f"{parts[0]} {parts[1]} {parts[2]} {parts[3]} {icao} {new_name}\n"
 
         try:
@@ -112,37 +101,6 @@ def process_apt_dat(apt_path: str, airport_map: Dict, dry_run: bool = True,
             return None
 
     return (icao, old_name, new_name)
-
-
-def find_backups(scenery_path: str):
-    """Return a list of apt.dat paths that have a backup available."""
-    found = []
-    for root, _, files in os.walk(scenery_path):
-        for file in files:
-            if file.lower() == "apt.dat" + BACKUP_SUFFIX:
-                apt_path = os.path.join(root, file[: -len(BACKUP_SUFFIX)])
-                found.append(apt_path)
-    return found
-
-
-def restore_backups(scenery_path: str, log_fn: Optional[Callable] = None) -> int:
-    """Restore every apt.dat that has a backup, then delete the backup. Returns count restored."""
-    def log(msg):
-        if log_fn:
-            log_fn(msg)
-
-    restored = 0
-    for apt_path in find_backups(scenery_path):
-        backup_path = apt_path + BACKUP_SUFFIX
-        try:
-            shutil.copy2(backup_path, apt_path)
-            os.remove(backup_path)
-            restored += 1
-            log(f"  Restored: {apt_path}")
-        except Exception as e:
-            log(f"  ERROR RESTORING {apt_path}: {e}")
-
-    return restored
 
 
 def scan_and_process(scenery_path: str, airport_map: Dict, dry_run: bool = True,
